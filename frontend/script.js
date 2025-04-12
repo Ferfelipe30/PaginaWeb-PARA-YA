@@ -1,41 +1,65 @@
-document.addEventListener('DOMContentLoaded', ()=>{
-    const form = document.getElementById('registroForm');
-    form.addEventListener('submit', async (event)=>{
-        event.preventDefault();
+document.addEventListener('DOMContentLoaded', () => {
+    const userForm = document.getElementById('userForm');
+    const deliveryForm = document.getElementById('deliveryForm');
+    const companyForm = document.getElementById('companyForm');
+    const recordList = document.getElementById('recordList');
 
-        //Capturar los datos del formulario
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        //Validar los datos
-        if (!name || !email || !password) {
-            alert('Por favor, completa todos los campos');
-            return;
-        }
-
-        //Crear el objeto de datos
-        const userData = { name, email, password };
-
+    const handleFormSubmit = async (form, url, data) => {
         try {
-            //Enviar los datos al backend 
-            const response = await fetch('http://localhost:3000/register', {
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(userData),
+                body: JSON.stringify(data),
             });
 
             if (response.ok) {
-                alert('¡Usuario registrado con éxito!');
+                alert('¡Registro exitoso!');
                 form.reset();
+                addRecordToList(data);
             } else {
-                alert('Error al registrar el usuario.');
+                alert('Error al registrar.');
             }
         } catch (error) {
             console.error('Error: ', error);
             alert('No se pudo conectar con el servidor.');
         }
+    };
+
+    const addRecordToList = (data) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = JSON.stringify(data);
+        recordList.appendChild(listItem);
+    };
+
+    userForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const data = {
+            name: document.getElementById('userName').value,
+            email: document.getElementById('userEmail').value,
+            password: document.getElementById('userPassword').value,
+        };
+        handleFormSubmit(userForm, 'http://localhost:3000/register/user', data);
+    });
+
+    deliveryForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const data = {
+            name: document.getElementById('deliveryName').value,
+            phone: document.getElementById('deliveryPhone').value,
+            vehicle: document.getElementById('deliveryVehicle').value,
+        };
+        handleFormSubmit(deliveryForm, 'http://localhost:3000/register/delivery', data);
+    });
+
+    companyForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const data = {
+            name: document.getElementById('companyName').value,
+            email: document.getElementById('companyEmail').value,
+            address: document.getElementById('companyPhone').value,
+        };
+        handleFormSubmit(companyForm, 'http://localhost:3000/register/company', data);
     });
 });

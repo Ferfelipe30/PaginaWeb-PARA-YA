@@ -8,26 +8,36 @@ const cors = require('cors');
 app.use(express.json());
 app.use(cors());
 
-app.post('/register', (req, res) => {
-    const userData = req.body;
+const saveData = (fileName, data, res) => {
+    const filePath = path.join(__dirname, fileName);
 
-    const filePath = path.join(__dirname, 'users.json');
-
-    fs.readFile(filePath, 'utf8', (err, data) => {
+    fs.readFile(filePath, 'utf8', (err, fileData) => {
         if (err && err.code !== 'ENOENT') {
             return res.status(500).json({message: 'Error al leer el archivo'});
         }
 
-        const users = data ? JSON.parse(data) : [];
-        users.push(userData);
+        const records = fileData ? JSON.parse(fileData) : [];
+        records.push(data);
 
-        fs.writeFile(filePath, JSON.stringify(users, null, 2), (err)=>{
+        fs.writeFile(filePath, JSON.stringify(records, null, 2), (err) => {
             if (err) {
-                return res.status(500).json({message:'Error al guardar los datos'});
+                return res.status(500).json({message: 'Error al guardar los datos'});
             }
-            res.status(201).json({message: 'Usuario registrado con exito'});
+            res.status(201).json({message: 'Registro exitoso'});
         });
     });
+};
+
+app.post('/register/user', (req, res) => {
+    saveData('users.json', req.body, res);
+});
+
+app.post('/register/delivery', (req, res) => {
+    saveData('delivery.json', req.body, res);
+});
+
+app.post('/register/company', (req, res) => {
+    saveData('companies.json', req.body, res);
 });
 
 app.listen(PORT, () => {
