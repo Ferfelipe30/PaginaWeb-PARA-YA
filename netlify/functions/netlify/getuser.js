@@ -8,17 +8,20 @@ exports.handler = async (event, context) => {
     if (!userDoc.exists) {
       return {
         statusCode: 404,
+        headers: { 'Access-Control-Allow-Origin': '*',},
         body: JSON.stringify({ error: 'Usuario no encontrado' }),
       };
     }
  
     return {
       statusCode: 200,
+      headers: { 'Access-Control-Allow-Origin': '*',},
       body: JSON.stringify(userDoc.data()),
     };
   } catch (error) {
     return {
       statusCode: 500,
+      headers: { 'Access-Control-Allow-Origin': '*',},
       body: JSON.stringify({ error: 'Error al obtener el usuario' }),
     };
   }
